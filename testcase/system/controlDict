@@ -106,7 +106,7 @@ functions
             name=fvModel,
             clouds=
             (
-                fuelCloud
+                fuelCloud airCloud
             )
         );
     }
@@ -118,7 +118,7 @@ functions
         writeControl        adjustableRunTime;
         writeInterval       5e-4;
         
-        clouds              (fuelCloud);
+        clouds              (fuelCloud airCloud);
         speciesList         (C3H8 CO2 H2O N2 O2);
     }
 
