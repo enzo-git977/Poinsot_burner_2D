@@ -58,8 +58,8 @@ subModels
         {
             type            manualInjectionExtended;
             nParticle       1;
-            SOI             0;
-            positionsFile   "particlePosition_fuel_entry.txt";
+            SOI             0.035;
+            positionsFile   "particlePosition_fuel_update.txt";
             U0              (0 0 0);
             sizeDistribution
             {
@@ -67,9 +67,9 @@ subModels
                 value       1e-4;//[m]
             }
             
-            repeatedInjection false;
+            repeatedInjection true;
             duration          1;  //[s]
-            injectEvery       1e-5;//[s]
+            injectEvery      2.5e-4;//[s]
         }
     }
 
