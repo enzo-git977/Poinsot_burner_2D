@@ -1,0 +1,80 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  11
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+
+cuttingPlanes
+{
+    #includeEtc "caseDicts/postProcessing/surface/surface.cfg"
+    writeControl    adjustableRunTime;
+    writeInterval   0.0005;
+
+    interpolate true;
+    fields      
+    (
+        p pMean pPrime2Mean
+        U UMean UPrime2Mean
+        T TMean TPrime2Mean
+        O2 H2O C3H8 k
+        DTFLES:E DTFLES:F Qdot
+	scalarDissipationRate
+    );
+
+    zPlane
+    {
+        type        cutPlane;
+        interpolate $interpolate;
+        planeType   pointAndNormal;
+        normal      (0 0 1);
+    }
+    
+    xPlane
+    {
+        $zPlane;
+        normal      (1 0 0);
+    }
+
+    yPlane
+    {
+        $zPlane;
+        normal      (0 1 0);
+    }
+
+    surfaces
+    (
+        zMid
+        {
+            $zPlane;
+            point       (0.15 0.025 0.0005);
+        }
+/*       
+        isoQ
+        {
+            type            isoSurface;
+            isoField        Q;
+            isoValue        3e05;
+            interpolate     true;
+        }
+        
+        isoT
+        {
+            type            isoSurface;
+            isoField        T;
+            isoValue        1450;
+            interpolate     true;
+        }
+
+        isoQdot
+        {
+            type            isoSurface;
+            isoField        Qdot;
+            isoValue        1000;
+            interpolate     true;
+        }
+*/
+    );
+}
+// ************************************************************************* //

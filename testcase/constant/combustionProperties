@@ -1,0 +1,43 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  11
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      combustionProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+combustionModel  DTFLES;
+
+
+DTFLESCoeffs // add coeff here
+{
+    fuel		"C3H8";
+    Tref		288;
+    Pref		101325;
+    
+    //given by Poinsot for the current reaction
+    Ta			15080;         
+    nuF			0.5;
+    nuO			1;
+
+    //1.34 (lifted); 0.54 (blowOff); 0.15 (anchored)
+    phi			1.34;  
+
+    beta		20;            //[from 1 to 50] - constant
+    lt			0.001;         // reference length
+    omegaMax    0.00376;       // calculated via python for stoichoiometric (phi = 1)
+
+    //- mesh dependent parameters
+    Nc			5;             //numbers of points to resolve the flame structure 
+    cellReferenceSize	0.001; //average mesh size
+}
+
+// ************************************************************************* //

@@ -1,0 +1,127 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  11
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format          ascii;
+    class           dictionary;
+    object          controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     foamRun;
+
+solver          multicomponentFluid;
+
+startFrom       latestTime;
+
+startTime       0.0;
+
+stopAt          endTime;
+
+endTime         0.1;
+
+deltaT          1e-6;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.001;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+adjustTimeStep  yes;
+
+maxCo           0.25;
+
+maxDeltaT       1e-6;
+
+libs (
+    "libcombustionModelsPoliMi.so" 
+    "libfvModelsPoliMi.so" 
+    "libfieldFunctionObjectsPoliMi.so"
+    "liblagrangianFunctionObjectsPoliMi.so"
+);
+
+
+functions
+{
+    #includeFunc MachNo;
+    
+    #includeFunc Q;
+    
+    #includeFunc Qdot;
+    
+    #includeFunc residuals(p,U,h,k);
+    
+    scalarDissipation
+    {
+        // fraction = (Y_AR - Y_{AR,b})/(Y_{AR,u} - Y_{AR,b})
+        type            scalarDissipation;
+        specieName      C3H8;
+        burntValue      0;    //value in bottom chamber
+        unburntValue    1; //value in upper chamber
+
+        writeControl    adjustableRunTime;
+        writeInterval   5e-4;
+    }
+
+    fieldsAverage
+    {
+        type                fieldAverage;
+        libs                ("libfieldFunctionObjects.so");
+
+        executeControl      timeStep;
+        writeControl        writeTime;
+
+        fields              (p U T);
+        mean                yes;
+        prime2Mean          yes;
+    }
+
+    #include "sample";
+
+    #include "cuttingPlanes";
+
+    clouds
+    {
+        type            fvModel;
+        #includeModel   clouds
+        (
+            name=fvModel,
+            clouds=
+            (
+                fuelCloud
+            )
+        );
+    }
+
+    getEulerianFields
+    {
+        type                getEulerianFields;
+
+        writeControl        adjustableRunTime;
+        writeInterval       5e-4;
+        
+        clouds              (fuelCloud);
+        speciesList         (C3H8 CO2 H2O N2 O2);
+    }
+
+}
+
+// ************************************************************************* //

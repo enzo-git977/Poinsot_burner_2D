@@ -1,0 +1,172 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  11
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+//- to be modified by the user
+
+avgMeshSize 1;// in [mm] - use 1/ Note: set the same value in combustionProperties cellReferenceSize=avgMeshSize
+gradingPos  4;// y-grading; >1 means cells squeezed close to struct
+
+gradingX1   0.3;// grading along x before struct (<1 means cells squeezed close to struct)
+gradingX3   3;// grading along x after struct (>1 means cells squeezed close to struct)
+
+
+
+// dimensions
+
+x0    0;
+x1  300;
+
+y0    0;
+yL   11;
+yLf  12;
+yC   17;
+yCf  18;
+yU   25;
+yT   50;
+
+zExt 1;
+
+nCellsX1 #calc "max( int( ($x1 - $x0) / $avgMeshSize ) , 1)";
+//nCellsX2 #calc "max( int( ($x2 - $x1) / $avgMeshSize *2) , 1)";
+//nCellsX3 #calc "max( int( ($x3 - $x2) / $avgMeshSize ) , 1)";
+
+nCellsY1 #calc "max( int( ($yL - $y0) / $avgMeshSize ) , 1)";
+nCellsY1f #calc "max( int( ($yLf - $yL) / $avgMeshSize ) , 1)";
+nCellsY2 #calc "max( int( ($yC - $yLf) / $avgMeshSize ) , 1)";//*1.5 to preserve cell size after shrinking
+nCellsY2f #calc "max( int( ($yCf - $yC) / $avgMeshSize ) , 1)";//*1.5 to preserve cell size after shrinking
+nCellsY3 #calc "max( int( ($yU - $yCf) / $avgMeshSize ) , 1)";
+nCellsY4 #calc "max( int( ($yT - $yU) / $avgMeshSize ) , 1)";
+nCellsZ  1; //#calc "max( int( $zExt / $avgMeshSize ) , 1)";
+
+gradingNeg #calc "1.0 / $gradingPos";
+
+convertToMeters 0.001;
+
+vertices
+(
+    ($x0   $y0   0)//0
+    ($x1   $y0   0)//1
+    ($x0   $yL   0)//2
+    ($x1   $yL   0)//3
+    ($x0   $yLf  0)//4
+    ($x1   $yLf  0)//5
+    ($x0   $yC   0)//6
+    ($x1   $yC   0)//7
+    ($x0   $yCf  0)//8
+    ($x1   $yCf  0)//9
+    ($x0   $yU   0)//10
+    ($x1   $yU   0)//11
+    ($x0   $yT   0)//12
+    ($x1   $yT   0)//13
+
+
+    ($x0   $y0   $zExt)//0
+    ($x1   $y0   $zExt)//1
+    ($x0   $yL   $zExt)//2
+    ($x1   $yL   $zExt)//3
+    ($x0   $yLf  $zExt)//4
+    ($x1   $yLf  $zExt)//5
+    ($x0   $yC   $zExt)//6
+    ($x1   $yC   $zExt)//7
+    ($x0   $yCf  $zExt)//8
+    ($x1   $yCf  $zExt)//9
+    ($x0   $yU   $zExt)//10
+    ($x1   $yU   $zExt)//11
+    ($x0   $yT   $zExt)//12
+    ($x1   $yT   $zExt)//13
+);
+
+blocks
+(
+    name blk1 hex (0 1 3 2 14 15 17 16)     ($nCellsX1 $nCellsY1  $nCellsZ) simpleGrading (1 1 1)
+    name blk2 hex (2 3 5 4 16 17 19 18)     ($nCellsX1 $nCellsY1f $nCellsZ) simpleGrading (1 1 1)
+    name blk3 hex (4 5 7 6 18 19 21 20)     ($nCellsX1 $nCellsY2  $nCellsZ) simpleGrading (1 1 1)
+    name blk4 hex (6 7 9 8 20 21 23 22)     ($nCellsX1 $nCellsY2f $nCellsZ) simpleGrading (1 1 1)
+    name blk5 hex (8 9 11 10 22 23 25 24)   ($nCellsX1 $nCellsY3  $nCellsZ) simpleGrading (1 1 1)
+    name blk6 hex (10 11 13 12 24 25 27 26) ($nCellsX1 $nCellsY4  $nCellsZ) simpleGrading (1 1 1)
+);
+
+boundary
+(
+    oxidizerInlet
+    {
+        type patch;
+        faces
+        (
+            (blk1 0)
+            (blk5 0)
+        );
+    }
+
+    fuelInlet
+    {
+        type patch;
+        faces
+        (
+            (blk3 0)
+        );
+    }
+    
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (blk1 1)
+            (blk2 1)
+            (blk3 1)
+            (blk4 1)
+            (blk5 1)
+            (blk6 1)
+        );
+    }
+   
+    inletWall
+    {
+        type wall;
+        faces
+        (
+            (blk2 0)
+            (blk4 0)
+            (blk6 0)
+        );
+    }
+    
+    top
+    {
+        type wall;
+        faces
+        (
+        	(blk6 3)
+        );
+    } 
+    
+    bottom
+    {
+        type symmetry;
+        faces
+        (
+        	(blk1 2)
+        );
+    } 
+);
+
+defaultPatch
+{
+    name sides;
+    type empty;
+}
+
+// ************************************************************************* //
