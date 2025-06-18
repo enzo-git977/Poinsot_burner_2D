@@ -58,7 +58,7 @@ subModels
         {
             type            manualInjectionExtended;
             nParticle       1;
-            SOI             0.035;
+            SOI             3e-2;
             positionsFile   "particlePosition_air_entry.txt";
             U0              (0 0 0);
             sizeDistribution
