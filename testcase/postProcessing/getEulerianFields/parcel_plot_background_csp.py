@@ -1,8 +1,10 @@
+print("Importing libraries")
 import os
 import sys 
 import pandas as pd
 import matplotlib.pyplot as plt
 
+print("Constructing path to vtk file and csp directories for plotting background ")
 # Setup paths
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 POSTPROCESSING_DIR = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
@@ -29,8 +31,10 @@ def shifted_points(x, y, shift_fraction=0.1):
 
 # === CREATE INSTANCE ===
 plotter = CSPPlotter(vtk_file=vtk_path, p=None, Y=None, x=None, x_indices=None, eigenvalues=None, vl=None)
-# choice of parcel
-target_parcel_id = 96
+# choice of parcel (parcel tried : 96, 205, 110,107,97,70,69,75)
+#target_parcel_id = 96
+target_parcel_id = 80
+print(f"Tracking parcel number : {target_parcel_id} ")
 
 # === INITIALISATION ===
 x_positions = []
@@ -90,6 +94,10 @@ for time_str in time_folders:
 
     except Exception as e:
         print(f"Error processing file {file_path}: {e}")
+# === CHECK IF PARCEL WAS FOUND ===
+if not x_positions:
+    print(f"Parcel ID {target_parcel_id} not found in any time folder.")
+    sys.exit()
 
 # === SET FIXED AXIS LIMITS BASED ON ALL DATA ===
 fixed_xlim = (-0.030, 0.15) # zoom in order to see better the parcels
@@ -159,5 +167,6 @@ for i in range(len(x_positions)):
     fig.savefig(f"pictures_csp/parcel_{i:04d}.png", dpi=150)
     plt.close(fig)
     print(f"Plotting successful for t={time_stamps[i]:.4f}")
+print("Pictures.png saves in GetEulerianFields/pictures_csp")
     
 
