@@ -1,0 +1,11 @@
+How to use parcel_plot_background_csp.py 
+command : python3 parcel_plot_background_csp.py 
+
+- needs a vtk file for the background of the domain 
+- reads the _withCSP.dat file of every time folder available in the getEulerianFields folder
+- saves pictures in the folder getEulerianFields/pictures_csp
+
+
+in order to have the _withCSP.dat, please run python3 All_time_mycsp_parcel_runner.py located in testcase/postProcessing/csp-main which run the function mycsp-analysis_parcels.py for every airCloud.dat file in the time folders.
+mycsp-analysis_parcels.py is the csp analysis of a parcel.dat file (for instance airCloud.dat)
+command mycsp-analysis_parcels.py -f filename.dat 
