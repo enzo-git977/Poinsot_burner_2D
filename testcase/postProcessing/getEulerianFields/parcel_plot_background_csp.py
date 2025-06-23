@@ -1,9 +1,19 @@
 import os
-import sys
-sys.path.append("/mnt/d/csp-main")  
+import sys 
 import pandas as pd
 import matplotlib.pyplot as plt
+
+# Setup paths
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+POSTPROCESSING_DIR = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
+CSP_MAIN_DIR = os.path.join(POSTPROCESSING_DIR, "csp-main")
+sys.path.append(CSP_MAIN_DIR)
+
 from plotter import CSPPlotter 
+
+# Construct paths
+vtk_path = os.path.join(POSTPROCESSING_DIR, "cuttingPlanes", "0.04", "zMid.vtk")
+base_dir = CURRENT_DIR  # same folder as this script
 
 # === HELPER FUNCTION ===
 def shifted_points(x, y, shift_fraction=0.1):
@@ -18,10 +28,8 @@ def shifted_points(x, y, shift_fraction=0.1):
     return shifted_x, shifted_y
 
 # === CREATE INSTANCE ===
-plotter = CSPPlotter(vtk_file=os.path.expanduser("~/OpenFOAM/maffeise-12/run/Poinsot_burner_2D/testcase/postProcessing/cuttingPlanes/0.04/zMid.vtk"), p=None, Y=None, x=None, x_indices=None, eigenvalues=None, vl=None)
-
-# === CONFIGURATION ===
-base_dir = os.path.expanduser('~/OpenFOAM/maffeise-12/run/Poinsot_burner_2D/testcase/postProcessing/getEulerianFields')
+plotter = CSPPlotter(vtk_file=vtk_path, p=None, Y=None, x=None, x_indices=None, eigenvalues=None, vl=None)
+# choice of parcel
 target_parcel_id = 96
 
 # === INITIALISATION ===
@@ -81,7 +89,7 @@ for time_str in time_folders:
             time_stamps.append(float(time_str))
 
     except Exception as e:
-        print(f"Error processing file {file_path}: {e}")c
+        print(f"Error processing file {file_path}: {e}")
 
 # === SET FIXED AXIS LIMITS BASED ON ALL DATA ===
 fixed_xlim = (-0.030, 0.15) # zoom in order to see better the parcels
@@ -109,6 +117,9 @@ for i in range(len(x_positions)):
     # Plot current position in blue
     ax.plot(x_positions[i], y_positions[i], 'o', color='blue',label=f'Parcel ID: {target_parcel_id}')
     
+    
+    ax.set_aspect('equal', "box") #for some reason it leads to the axis changing for every timestep so comment
+    
     # Fix axes to constant limits
     ax.set_xlim(fixed_xlim)
     ax.set_ylim(fixed_ylim)
@@ -123,7 +134,6 @@ for i in range(len(x_positions)):
     borderaxespad=0       # reduce padding between legend and axes
     )
     
-    #ax.set_aspect('equal', "box") for some reason it leads to the axis changing for every timestep so comment
     
     # Flag to point out if species are explosive
     flag_text = "Explosive" if bool(WP_flag_list[i]) else "Not Explosive"
