@@ -1,0 +1,15 @@
+#======= Function in csp-main ======# 
+mycsp-analysis.py : do csp analysis of a .vtk file use the function with python3 mycsp-analysis.py -f filename.vtk
+mycsp-analysis_parcels.py : do csp analysis of a parcel .dat file : python3 mycsp-analysis_parcels.py -f filename.dat
+All_time_mycsp_parcel_runner.py : launch myscp-analysis_parcels.py for every time folder present in the getEulerianFields folder : 
+python3 All_time_mycsp_parcel_runner.py 
+
+
+#======= Function in  getEulerianFields======# 
+
+parcel_plot_with_background.py : plot a given parcel trajectory with temperature and explosiveness status at each timestep
+the images are saved in the pictures_csp folder
+
+parcel_plot_Temperaturebackground.py : plot a given parcel trajectory with temperature and explosiveness status at each timestep
+with the temperature field in the background. The images are saved in the pictures_csp_with_T folder
+
