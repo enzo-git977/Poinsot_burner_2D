@@ -100,15 +100,16 @@ plt.tight_layout()
 plt.grid(True, axis='y', linestyle='--', alpha=0.5)
 
 # Get participation indexes values
+reaction_number = 0 # reaction studied
 api,reaction_names = csp.participation_index_parcel(p, T, Y, vr)
 pi = np.zeros(len(radicals))
-pi[0:-1] = np.abs(api[0, 0, :].real)
+pi[0:-1] = np.abs(api[0, reaction_number, :].real) # values of participation indexes
 
 # Plot participation indexes 
 plt.figure(figsize=(12, 6))
 
 bars = plt.bar(radicals, pi, color='skyblue')
-plt.title(f"Participation indexes of Reaction : {reaction_names[0]}", fontsize=14)
+plt.title(f"Participation indexes of Reaction : {reaction_names[reaction_number]}", fontsize=14)
 plt.xlabel('Species')
 plt.ylabel('PI values')
 plt.xticks(rotation=45, ha='right')
