@@ -1,0 +1,45 @@
+0) Create the mechanism starting from a yaml file in mech folder
+
+    python3 0-prepareMechanism.py
+
+        - the construction is based on the chemkin II files, so that we don't have to rely on cantera to build pyjacob.
+        - some versions of cantera are not fully compatible with pyjacob, therefore it's better to avoid to use that.
+
+        INSIDE the python, other than creating the chemkin format of the mechanism, it does the following:
+
+        *** Create the pyjacob construction
+
+        python3 -m pyjac -l c -i mech/chem.inp -t mech/therm.dat -ls <inertSpecies>
+
+        - <inertSpecies> is the last inert species used in the yaml file, as well as in OpenFOAM.
+
+        python3 -m pyjac.pywrap -so out -l c
+
+1) Create the CSP VTK planes
+
+    python3 1-createVTKs.py
+    
+2) Create the CSP plot
+
+    python3 2-contour-CSP.py
+    
+    
+    
+########### IF ONE WANTS TO EVALUATE CSP OVER AN AXIAL LINE
+
+3) create Axial line 
+
+    python3 3-createAxialLine.py
+    
+    
+4) plot the multiPlot
+
+    python3 4-reactionAnalysis.py
+    
+    
+    
+    
+########### TO CLEAN
+
+    python3 Allclean.py
+
